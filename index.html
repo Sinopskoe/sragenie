@@ -1,0 +1,1174 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Синопское сражение</title>
+<style>
+  :root {
+    --bg: #fafaf8;
+    --ink: #1a1a1a;
+    --muted: #8a8a82;
+    --line: #e6e6e0;
+    --accent: #8b2e2e;
+    --good: #3a6b4a;
+    --bad: #a33a3a;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+    -webkit-tap-highlight-color: transparent;
+    overflow-x: hidden;
+  }
+
+  h1, h2, h3 { font-family: Georgia, 'Times New Roman', serif; font-weight: normal; }
+
+  /* ============== TOPBAR ============== */
+  .topbar {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    padding: 0 24px;
+    background: rgba(250, 250, 248, 0.92);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--line);
+    z-index: 100;
+  }
+
+  .burger {
+    width: 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    flex-shrink: 0;
+    touch-action: manipulation;
+  }
+  .burger span {
+    display: block;
+    width: 22px;
+    height: 2px;
+    background: var(--ink);
+    border-radius: 1px;
+    transition: transform .35s cubic-bezier(.5,0,.2,1), opacity .2s ease;
+  }
+  .burger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .burger.open span:nth-child(2) { opacity: 0; }
+  .burger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+  .brand {
+    font-family: Georgia, serif;
+    font-size: 15px;
+    letter-spacing: 0.2px;
+    color: var(--ink);
+  }
+
+  /* ============== MENU ============== */
+  .menu {
+    position: fixed;
+    top: 60px; left: 0; right: 0;
+    background: var(--bg);
+    border-bottom: 1px solid var(--line);
+    overflow: hidden;
+    max-height: 0;
+    transition: max-height .45s cubic-bezier(.5,0,.2,1);
+    z-index: 99;
+  }
+  .menu.open { max-height: 400px; }
+
+  .menu a {
+    display: block;
+    padding: 15px 24px;
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 14px;
+    letter-spacing: 0.3px;
+    border-bottom: 1px solid var(--line);
+    opacity: 0;
+    transform: translateY(-6px);
+    cursor: pointer;
+    touch-action: manipulation;
+    transition: opacity .35s ease, transform .35s ease, color .2s, padding-left .2s;
+  }
+  .menu a:last-child { border-bottom: none; }
+  .menu a:hover { color: var(--ink); padding-left: 30px; }
+  .menu.open a { opacity: 1; transform: translateY(0); }
+  .menu.open a:nth-child(1) { transition-delay: .05s; }
+  .menu.open a:nth-child(2) { transition-delay: .10s; }
+  .menu.open a:nth-child(3) { transition-delay: .15s; }
+  .menu.open a:nth-child(4) { transition-delay: .20s; }
+  .menu.open a:nth-child(5) { transition-delay: .25s; }
+  .menu.open a:nth-child(6) { transition-delay: .30s; }
+
+  /* ============== HERO ============== */
+  .hero {
+    min-height: 100vh;
+    padding: 140px 24px 80px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    max-width: 900px;
+    margin: 0 auto;
+    scroll-margin-top: 60px;
+  }
+  .hero .date {
+    font-size: 12px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 24px;
+    opacity: 0;
+    animation: fadeUp .8s .1s forwards;
+  }
+  .hero h1 {
+    font-size: clamp(32px, 6vw, 60px);
+    line-height: 1.08;
+    letter-spacing: -0.5px;
+    opacity: 0;
+    animation: fadeUp .9s .25s forwards;
+  }
+  .hero h1 em { color: var(--accent); font-style: italic; }
+  .hero .hdivider {
+    width: 60px;
+    height: 1px;
+    background: var(--ink);
+    margin: 40px 0;
+    opacity: 0;
+    animation: fadeUp .9s .5s forwards;
+  }
+  .hero .sub {
+    color: var(--muted);
+    font-size: 16px;
+    max-width: 560px;
+    opacity: 0;
+    animation: fadeUp .9s .65s forwards;
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(14px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ============== SECTIONS ============== */
+  section {
+    padding: 80px 24px;
+    max-width: 900px;
+    margin: 0 auto;
+    scroll-margin-top: 80px;
+  }
+
+  .slabel {
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 14px;
+  }
+  .stitle {
+    font-size: clamp(26px, 3.8vw, 38px);
+    line-height: 1.15;
+    letter-spacing: -0.3px;
+    margin-bottom: 16px;
+  }
+  .ssub {
+    color: var(--muted);
+    font-size: 15px;
+    max-width: 600px;
+    margin-bottom: 48px;
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity .7s ease, transform .7s ease;
+  }
+  .reveal.on { opacity: 1; transform: translateY(0); }
+
+  /* ============== STATS ============== */
+  .stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 56px;
+    margin: 40px 0 48px;
+  }
+  .stat-col h3 {
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: normal;
+    font-family: inherit;
+    margin-bottom: 20px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--ink);
+  }
+  .stat-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--line);
+    font-size: 14px;
+    color: var(--muted);
+  }
+  .stat-row b {
+    font-family: Georgia, serif;
+    font-size: 16px;
+    font-weight: normal;
+    color: var(--ink);
+    white-space: nowrap;
+  }
+
+  .prose { color: var(--ink); font-size: 15.5px; }
+  .prose p { margin-bottom: 18px; }
+  .prose strong { color: var(--accent); font-weight: 600; }
+
+  /* ============== MYTHS ============== */
+  .myth {
+    padding: 32px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .myth:first-of-type { padding-top: 0; }
+  .myth h3 {
+    font-size: 20px;
+    margin-bottom: 12px;
+    line-height: 1.3;
+  }
+  .myth p { color: var(--muted); font-size: 15px; }
+  .myth .truth {
+    margin-top: 16px;
+    padding-left: 20px;
+    border-left: 2px solid var(--accent);
+    color: var(--muted);
+    font-size: 14px;
+    line-height: 1.65;
+  }
+  .myth .truth b { color: var(--ink); }
+
+  /* ============== PROP ============== */
+  .prop-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 56px;
+    margin-bottom: 48px;
+  }
+  .prop-item h3 {
+    font-size: 17px;
+    margin-bottom: 12px;
+    letter-spacing: -0.2px;
+  }
+  .prop-item p {
+    color: var(--muted);
+    font-size: 14.5px;
+  }
+  .conclusion {
+    border-top: 1px solid var(--line);
+    padding-top: 32px;
+  }
+  .conclusion p {
+    font-family: Georgia, serif;
+    font-size: 19px;
+    line-height: 1.55;
+    color: var(--ink);
+  }
+
+  /* ============== SOURCES ============== */
+  .sources {
+    list-style: none;
+    counter-reset: src;
+    border-top: 1px solid var(--ink);
+  }
+  .sources li {
+    counter-increment: src;
+    padding: 20px 0 20px 40px;
+    border-bottom: 1px solid var(--line);
+    position: relative;
+    font-size: 14.5px;
+    color: var(--ink);
+    line-height: 1.6;
+  }
+  .sources li::before {
+    content: "0" counter(src);
+    position: absolute;
+    left: 0;
+    top: 20px;
+    font-family: Georgia, serif;
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: 1px;
+  }
+  .sources li span {
+    display: block;
+    color: var(--muted);
+    font-size: 13px;
+    margin-top: 4px;
+  }
+  .sources a {
+    color: var(--ink);
+    text-decoration: none;
+    border-bottom: 1px solid var(--line);
+    transition: border-color .2s, color .2s;
+    word-break: break-word;
+  }
+  .sources a:hover { color: var(--accent); border-bottom-color: var(--accent); }
+  .sources .url {
+    display: block;
+    color: var(--muted);
+    font-size: 12.5px;
+    margin-top: 6px;
+    word-break: break-all;
+    font-family: 'Courier New', monospace;
+  }
+  .sources .url a { color: var(--muted); border-bottom: none; }
+  .sources .url a:hover { color: var(--accent); }
+
+  /* ============== GAME ============== */
+  .gameshell { max-width: 560px; }
+
+  .screen { text-align: center; padding: 20px 0; }
+  .screen h3 {
+    font-size: 24px;
+    margin-bottom: 12px;
+    letter-spacing: -0.2px;
+  }
+  .screen p {
+    color: var(--muted);
+    font-size: 15px;
+    max-width: 440px;
+    margin: 0 auto 28px;
+  }
+
+  .btn {
+    display: inline-block;
+    cursor: pointer;
+    border: 1px solid var(--ink);
+    background: transparent;
+    color: var(--ink);
+    font-family: inherit;
+    font-size: 12px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 15px 34px;
+    border-radius: 4px;
+    touch-action: manipulation;
+    transition: background .25s, color .25s, transform .15s;
+  }
+  .btn:hover { background: var(--ink); color: var(--bg); }
+  .btn:active { transform: scale(.97); }
+
+  .btn-sm {
+    display: inline-block;
+    cursor: pointer;
+    border: 1px solid var(--ink);
+    background: transparent;
+    color: var(--ink);
+    font-family: inherit;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 11px 24px;
+    border-radius: 4px;
+    touch-action: manipulation;
+    transition: background .25s, color .25s, transform .15s;
+  }
+  .btn-sm:hover { background: var(--ink); color: var(--bg); }
+  .btn-sm:active { transform: scale(.97); }
+
+  .gtop {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 18px;
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .gtop b {
+    color: var(--ink);
+    font-size: 15px;
+    letter-spacing: 0;
+    font-family: Georgia, serif;
+    font-weight: normal;
+    display: inline-block;
+  }
+  #scoreDisp.bump { animation: bump .4s ease; }
+  @keyframes bump {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.35); color: var(--good); }
+    100% { transform: scale(1); }
+  }
+
+  .gtrack {
+    height: 2px;
+    background: var(--line);
+    margin-bottom: 32px;
+    overflow: hidden;
+  }
+  .gfill {
+    height: 100%;
+    background: var(--ink);
+    width: 0%;
+    transition: width .45s cubic-bezier(.4,0,.2,1);
+  }
+
+  .cardslot {
+    position: relative;
+    height: 300px;
+    margin-bottom: 20px;
+  }
+  .card {
+    position: absolute;
+    inset: 0;
+    background: #ffffff;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 32px;
+    text-align: center;
+    cursor: grab;
+    user-select: none;
+    touch-action: none;
+    box-shadow: 0 1px 30px rgba(0,0,0,0.03);
+    transition: transform .3s cubic-bezier(.2,.8,.3,1), opacity .35s ease, box-shadow .3s ease, border-color .25s ease;
+    animation: cardIn .45s cubic-bezier(.2,.8,.3,1);
+  }
+  .card:active { cursor: grabbing; }
+  .card.dragging { transition: none; }
+
+  @keyframes cardIn {
+    from { opacity: 0; transform: translateY(18px) scale(.97); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  .card.out-r {
+    transform: translateX(120%) rotate(18deg) !important;
+    opacity: 0;
+  }
+  .card.out-l {
+    transform: translateX(-120%) rotate(-18deg) !important;
+    opacity: 0;
+  }
+
+  .card.shake {
+    animation: shake .42s ease;
+    border-color: var(--bad);
+  }
+  @keyframes shake {
+    0%, 100% { transform: translateX(0) rotate(0); }
+    20% { transform: translateX(-10px) rotate(-1.5deg); }
+    40% { transform: translateX(10px) rotate(1.5deg); }
+    60% { transform: translateX(-6px) rotate(-1deg); }
+    80% { transform: translateX(6px) rotate(1deg); }
+  }
+
+  .cnum {
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 20px;
+  }
+  .ctext {
+    font-family: Georgia, serif;
+    font-size: clamp(18px, 2.4vw, 22px);
+    line-height: 1.5;
+    color: var(--ink);
+  }
+
+  .explain {
+    background: #ffffff;
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--bad);
+    border-radius: 10px;
+    padding: 32px;
+    text-align: left;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    animation: explainIn .45s cubic-bezier(.2,.8,.3,1);
+  }
+  @keyframes explainIn {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .e-label {
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--bad);
+    margin-bottom: 14px;
+  }
+  .e-label b { font-weight: normal; color: var(--ink); }
+  .e-text {
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--ink);
+    margin-bottom: 24px;
+  }
+
+  .gbtns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .gbtn {
+    padding: 18px;
+    background: #ffffff;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    font-family: inherit;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: pointer;
+    color: var(--ink);
+    touch-action: manipulation;
+    transition: background .25s, border-color .25s, color .25s, transform .15s;
+  }
+  .gbtn:hover { border-color: var(--ink); }
+  .gbtn:active { transform: scale(.98); }
+  .gbtn:disabled { opacity: .3; cursor: default; pointer-events: none; }
+  .gbtn.fb:hover { background: #fdf5f5; border-color: var(--bad); color: var(--bad); }
+  .gbtn.tb:hover { background: #f4f8f5; border-color: var(--good); color: var(--good); }
+
+  .swipe-hint {
+    text-align: center;
+    margin-top: 16px;
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+
+  .rscore {
+    font-family: Georgia, serif;
+    font-size: clamp(64px, 12vw, 100px);
+    line-height: 1;
+    color: var(--ink);
+    animation: scorePop .6s cubic-bezier(.2,1.3,.4,1);
+  }
+  .rscore small { font-size: 22px; color: var(--muted); }
+  @keyframes scorePop {
+    0% { opacity: 0; transform: scale(.6); }
+    60% { transform: scale(1.06); }
+    100% { opacity: 1; transform: scale(1); }
+  }
+  .rtitle {
+    font-size: 26px;
+    margin: 30px 0 12px;
+    letter-spacing: -0.2px;
+  }
+  .rdesc {
+    color: var(--muted);
+    font-size: 15px;
+    max-width: 460px;
+    margin: 0 auto 32px;
+    line-height: 1.7;
+  }
+
+  .flash {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    pointer-events: none;
+    opacity: 0;
+  }
+  .flash.g {
+    background: radial-gradient(circle at 50% 50%, rgba(58,107,74,.09), transparent 60%);
+    animation: flash .45s ease;
+  }
+  .flash.r {
+    background: radial-gradient(circle at 50% 50%, rgba(163,58,58,.1), transparent 60%);
+    animation: flash .45s ease;
+  }
+  @keyframes flash {
+    0% { opacity: 0; }
+    30% { opacity: 1; }
+    100% { opacity: 0; }
+  }
+
+  footer {
+    padding: 44px 24px;
+    text-align: center;
+    border-top: 1px solid var(--line);
+    color: var(--muted);
+    font-size: 12px;
+    letter-spacing: 0.3px;
+  }
+
+  @media (max-width: 720px) {
+    .stats, .prop-grid { grid-template-columns: 1fr; gap: 36px; }
+    section { padding: 60px 20px; }
+    .hero { padding: 120px 20px 60px; }
+    .cardslot { height: 320px; }
+    .explain { padding: 26px 22px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <button class="burger" id="burger" aria-label="Меню">
+    <span></span><span></span><span></span>
+  </button>
+  <span class="brand">Синопское сражение</span>
+</div>
+
+<nav class="menu" id="menu">
+  <a href="#hero" data-target="hero">Начало</a>
+  <a href="#battle" data-target="battle">Сражение</a>
+  <a href="#myths" data-target="myths">Мифы</a>
+  <a href="#prop" data-target="prop">Пропаганда</a>
+  <a href="#sources" data-target="sources">Источники</a>
+  <a href="#game" data-target="game">Игра</a>
+</nav>
+
+<header id="hero" class="hero">
+  <div class="date">18 (30) ноября 1853</div>
+  <h1>Синопское сражение:<br><em>триумф флота и первый опыт информационной войны</em></h1>
+  <div class="hdivider"></div>
+  <p class="sub">Последняя крупная победа парусного флота в истории. Реальный ход событий, разбор мифов и то, как факты превращаются в оружие.</p>
+</header>
+
+<section id="battle">
+  <div class="reveal">
+    <div class="slabel">01 — Ход сражения</div>
+    <h2 class="stitle">Силы сторон и ход боя</h2>
+    <p class="ssub">Сражение в Синопской бухте 18 (30) ноября 1853 года стало последней крупной победой парусного флота. Вокруг события сложился целый пласт искажений — от опечаток до пропаганды.</p>
+  </div>
+
+  <div class="stats reveal">
+    <div class="stat-col">
+      <h3>Турецкая эскадра — Осман-паша</h3>
+      <div class="stat-row"><span>Корабли</span><b>16</b></div>
+      <div class="stat-row"><span>Орудия на кораблях</span><b>510</b></div>
+      <div class="stat-row"><span>Береговые орудия</span><b>38</b></div>
+      <div class="stat-row"><span>Потери</span><b>3000–4000</b></div>
+      <div class="stat-row"><span>Пленные</span><b>~200 + Осман-паша</b></div>
+    </div>
+    <div class="stat-col">
+      <h3>Русская эскадра — Нахимов</h3>
+      <div class="stat-row"><span>Линейные корабли и фрегаты</span><b>6 + 2</b></div>
+      <div class="stat-row"><span>Всего орудий</span><b>720</b></div>
+      <div class="stat-row"><span>Бомбические пушки</span><b>76</b></div>
+      <div class="stat-row"><span>Убитые</span><b>37–38</b></div>
+      <div class="stat-row"><span>Раненые</span><b>210–235</b></div>
+    </div>
+  </div>
+
+  <div class="prose reveal">
+    <p>Русские корабли вошли в бухту <strong>двумя колоннами</strong>. Флагман «Императрица Мария» шёл первым и принял на себя главный удар. Бой длился около <strong>четырёх с половиной часов</strong>. К 17:00 сопротивление турок было сломлено.</p>
+    <p>Из 16 турецких кораблей спастись удалось только одному — пароходу <strong>«Таиф»</strong> под командой английского офицера Слейда. Остальные 15 уничтожены. Ни один русский корабль не был потоплен.</p>
+    <p>Потери турок: от 3000 до 4000 человек убитыми и ранеными, около 200 моряков в плену, включая самого Осман-пашу. Потери русских: 37–38 убитых и 210–235 раненых.</p>
+  </div>
+</section>
+
+<section id="myths">
+  <div class="reveal">
+    <div class="slabel">02 — Разоблачение</div>
+    <h2 class="stitle">Главные мифы</h2>
+    <p class="ssub">Каждое обвинение проверяем по документам.</p>
+  </div>
+
+  <div class="myth reveal">
+    <h3>Миф первый: «Синопская резня»</h3>
+    <p>The Times назвала сражение «Синопской резнёй» (Massacre of Sinope), и этот ярлык подхватили другие издания. Русских моряков обвиняли в расстреле раненых турок в воде и намеренном сожжении города.</p>
+    <div class="truth"><b>Правда:</b> документальных подтверждений этих обвинений нет. Напротив, Нахимов приказывал прекращать огонь по спустившим флаг кораблям и оказывать помощь пленным, включая Осман-пашу. Обвинения были сфабрикованы для оправдания вступления Англии и Франции в войну.</div>
+  </div>
+
+  <div class="myth reveal">
+    <h3>Миф второй: Маркс и 1848 год</h3>
+    <p>Встречается утверждение: «в 1848 г. начинающий публицист К. Маркс писал…».</p>
+    <div class="truth"><b>Правда:</b> в 1848 году Маркс опубликовал «Манифест Коммунистической партии» и был главным редактором «Neue Rheinische Zeitung» — не «начинающим и малоизвестным». Статьи о Восточном вопросе и Синопе вышли позже, в декабре 1853 — январе 1854, в «New-York Daily Tribune».</div>
+  </div>
+
+  <div class="myth reveal">
+    <h3>Миф третий: «Война началась в октябре 1854»</h3>
+    <p>В некоторых текстах: «С началом войны в октябре 1854 г. … Д. Рассел озвучил…».</p>
+    <div class="truth"><b>Правда:</b> Крымская война началась в октябре <b>1853</b> года (Россия против Турции), Англия и Франция вступили в неё в марте 1854. Фраза лорда Джона Рассела «Надо вырвать клыки у медведя…» относится к 1854 году и была не причиной войны, а попыткой оправдать её эскалацию перед парламентом.</div>
+  </div>
+</section>
+
+<section id="prop">
+  <div class="reveal">
+    <div class="slabel">03 — Информационная война</div>
+    <h2 class="stitle">Пропагандистская ложь</h2>
+    <p class="ssub">Как реальные факты превращались в оружие.</p>
+  </div>
+
+  <div class="prop-grid reveal">
+    <div class="prop-item">
+      <h3>Механизм фабрикации</h3>
+      <p>Британская пресса представила Синопское сражение как «позорную резню», чтобы опорочить русский флот и убедить мир в «кровожадности русских». Цель — сформировать общественное мнение и оправдать вступление Англии и Франции в войну. Никаких документов в подтверждение обвинений представлено не было.</p>
+    </div>
+    <div class="prop-item">
+      <h3>Хронологические подмены</h3>
+      <p>Смещение дат — ещё один инструмент манипуляции: «начинающий публицист» Маркс в 1848-м, «октябрь 1854» вместо 1853-го, цитата Рассела как «причина» вместо «оправдания». Точная хронология разрушает всю конструкцию.</p>
+    </div>
+  </div>
+
+  <div class="conclusion reveal">
+    <p>Синопское сражение навсегда останется примером тактического мастерства Нахимова и героизма русских моряков. Но его история также показывает, как реальные факты могут превращаться в оружие информационной войны. Точные цифры, проверенные источники и цитаты из первоисточников — главное средство против манипуляций.</p>
+  </div>
+</section>
+
+<section id="sources">
+  <div class="reveal">
+    <div class="slabel">04 — Проверенные источники</div>
+    <h2 class="stitle">Список литературы</h2>
+    <p class="ssub">Материалы, на которые опирается разбор.</p>
+  </div>
+
+  <ol class="sources reveal">
+    <li>
+      <a href="https://old.bigenc.ru/military_science/text/v/3664632" target="_blank" rel="noopener noreferrer">Большая российская энциклопедия</a>, статья «Синопское сражение 1853»
+      <span>Данные о 510 и 720 орудиях</span>
+      <span class="url"><a href="https://old.bigenc.ru/military_science/text/v/3664632" target="_blank" rel="noopener noreferrer">old.bigenc.ru/military_science/text/v/3664632</a></span>
+    </li>
+    <li>
+      <a href="https://www.culture.ru/events/5179131/den-pobedy-russkoi-eskadry-pod-komandovaniem-p-s-nakhimova-nad-tureckoi-eskadroi-u-mysa-sinop" target="_blank" rel="noopener noreferrer">Портал «Культура.РФ»</a>, событие «День победы русской эскадры…»
+      <span>Потери (37 убитых, 235 раненых), 510 и 720 орудий, бегство «Таифа»</span>
+      <span class="url"><a href="https://www.culture.ru/events/5179131/den-pobedy-russkoi-eskadry-pod-komandovaniem-p-s-nakhimova-nad-tureckoi-eskadroi-u-mysa-sinop" target="_blank" rel="noopener noreferrer">culture.ru/events/5179131/…</a></span>
+    </li>
+    <li>
+      <a href="https://smotrim.ru/audio/2257637" target="_blank" rel="noopener noreferrer">Радиопрограмма «Фрегат Паллада»</a> (smotrim.ru)
+      <span>720 и 510 орудий, потери (38 убитых, 235 раненых), пароход под командованием Слейда</span>
+      <span class="url"><a href="https://smotrim.ru/audio/2257637" target="_blank" rel="noopener noreferrer">smotrim.ru/audio/2257637</a></span>
+    </li>
+    <li>
+      <a href="http://militera.lib.ru/h/zolotarev_kozlov2/10.html" target="_blank" rel="noopener noreferrer">Военная литература</a> (militera.lib.ru)
+      <span>Уничтожение 15 из 16 турецких кораблей, бегство «Таифа»</span>
+      <span class="url"><a href="http://militera.lib.ru/h/zolotarev_kozlov2/10.html" target="_blank" rel="noopener noreferrer">militera.lib.ru/h/zolotarev_kozlov2/10.html</a></span>
+    </li>
+    <li>
+      <a href="https://sn-philol.cfuv.ru/wp-content/uploads/2025/11/13_Орехов_УЗ-ФН-2025-4-153-177.pdf" target="_blank" rel="noopener noreferrer">Научная статья</a> (sn-philol.cfuv.ru)
+      <span>Подтверждение, что The Times назвала сражение «Синопской резнёй»</span>
+      <span class="url"><a href="https://sn-philol.cfuv.ru/wp-content/uploads/2025/11/13_Орехов_УЗ-ФН-2025-4-153-177.pdf" target="_blank" rel="noopener noreferrer">sn-philol.cfuv.ru/wp-content/uploads/2025/11/…pdf</a></span>
+    </li>
+    <li>
+      <a href="https://rossaprimavera.ru/article/54bca9eb" target="_blank" rel="noopener noreferrer">Интервью на rossaprimavera.ru</a>
+      <span>Разоблачение пропагандистского мифа о «резне»</span>
+      <span class="url"><a href="https://rossaprimavera.ru/article/54bca9eb" target="_blank" rel="noopener noreferrer">rossaprimavera.ru/article/54bca9eb</a></span>
+    </li>
+    <li>
+      <a href="https://www.degruyterbrill.com/document/doi/10.1515/9783050076072-164/html" target="_blank" rel="noopener noreferrer">De Gruyter Brill</a>
+      <span>Публикация статьи Маркса в New-York Daily Tribune 16 декабря 1853 года</span>
+      <span class="url"><a href="https://www.degruyterbrill.com/document/doi/10.1515/9783050076072-164/html" target="_blank" rel="noopener noreferrer">degruyterbrill.com/document/doi/…/html</a></span>
+    </li>
+    <li>
+      <a href="https://inslav.ru/sites/default/files/editions/1991_vinogradov.pdf" target="_blank" rel="noopener noreferrer">Институт славяноведения РАН</a> (inslav.ru)
+      <span>Цитата лорда Джона Рассела «Надо вырвать клыки у медведя…»</span>
+      <span class="url"><a href="https://inslav.ru/sites/default/files/editions/1991_vinogradov.pdf" target="_blank" rel="noopener noreferrer">inslav.ru/sites/default/files/editions/1991_vinogradov.pdf</a></span>
+    </li>
+  </ol>
+</section>
+
+<section id="game">
+  <div class="reveal">
+    <div class="slabel">05 — Проверь себя</div>
+    <h2 class="stitle">Правда или неправда</h2>
+    <p class="ssub">Свайп вправо — правда, влево — неправда. Или используйте кнопки. За каждый правильный ответ — один балл.</p>
+  </div>
+
+  <div class="gameshell reveal">
+    <div id="startScreen" class="screen">
+      <h3>Готовы?</h3>
+      <p>20 карточек с фактами из документа. Читайте утверждение и решайте, соответствует ли оно источникам.</p>
+      <button class="btn" id="startBtn">Начать</button>
+    </div>
+
+    <div id="playScreen" style="display:none;">
+      <div class="gtop">
+        <span>Карточка <b id="cCounter">1</b> / <b id="cTotal">20</b></span>
+        <span>Баллы: <b id="scoreDisp">0</b></span>
+      </div>
+      <div class="gtrack"><div class="gfill" id="gFill"></div></div>
+      <div class="cardslot" id="cardSlot"></div>
+      <div class="gbtns" id="gbtns">
+        <button class="gbtn fb" id="falseBtn">Неправда</button>
+        <button class="gbtn tb" id="trueBtn">Правда</button>
+      </div>
+      <div class="swipe-hint" id="swipeHint">← Неправда &nbsp;·&nbsp; Правда →</div>
+    </div>
+
+    <div id="resultScreen" class="screen" style="display:none;">
+      <div class="rscore"><span id="finalScore">0</span><small> / 20</small></div>
+      <h3 class="rtitle" id="achTitle"></h3>
+      <p class="rdesc" id="achDesc"></p>
+      <button class="btn" id="restartBtn">Сыграть снова</button>
+    </div>
+  </div>
+</section>
+
+<footer>
+  Синопское сражение — 18 (30) ноября 1853 года
+</footer>
+
+<div class="flash" id="flash"></div>
+
+<script>
+/* ============ МЕНЮ ============ */
+var burger = document.getElementById('burger');
+var menu = document.getElementById('menu');
+
+function closeMenu() {
+  burger.classList.remove('open');
+  menu.classList.remove('open');
+}
+
+function toggleMenu() {
+  var willOpen = !menu.classList.contains('open');
+  burger.classList.toggle('open', willOpen);
+  menu.classList.toggle('open', willOpen);
+}
+
+var burgerLock = false;
+function onBurger(e) {
+  if (burgerLock) return;
+  burgerLock = true;
+  setTimeout(function() { burgerLock = false; }, 350);
+  e.preventDefault();
+  e.stopPropagation();
+  toggleMenu();
+}
+burger.addEventListener('click', onBurger);
+
+menu.addEventListener('click', function(e) {
+  var link = e.target.closest ? e.target.closest('a[data-target]') : null;
+  if (!link) return;
+  e.preventDefault();
+  e.stopPropagation();
+
+  var id = link.getAttribute('data-target');
+  var target = document.getElementById(id);
+
+  closeMenu();
+
+  if (!target) return;
+  setTimeout(function() {
+    if (target.scrollIntoView) {
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } else {
+      window.scrollTo(0, target.offsetTop);
+    }
+  }, 60);
+});
+
+document.addEventListener('pointerdown', function(e) {
+  if (!menu.classList.contains('open')) return;
+  if (menu.contains(e.target)) return;
+  if (burger.contains(e.target)) return;
+  closeMenu();
+}, true);
+
+/* ============ ПОЯВЛЕНИЕ ПРИ СКРОЛЛЕ ============ */
+var observer = new IntersectionObserver(function(entries) {
+  entries.forEach(function(e) {
+    if (e.isIntersecting) {
+      e.target.classList.add('on');
+      observer.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.12 });
+
+document.querySelectorAll('.reveal').forEach(function(el) { observer.observe(el); });
+
+/* ============ ЗВУК ============ */
+var audioCtx = null;
+function getCtx() {
+  if (!audioCtx) {
+    try {
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    } catch (e) { return null; }
+  }
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+  return audioCtx;
+}
+function tone(freq, dur, type, vol, delay) {
+  var ctx = getCtx();
+  if (!ctx) return;
+  var t = ctx.currentTime + (delay || 0);
+  var osc = ctx.createOscillator();
+  var g = ctx.createGain();
+  osc.type = type || 'sine';
+  osc.frequency.setValueAtTime(freq, t);
+  g.gain.setValueAtTime(0, t);
+  g.gain.linearRampToValueAtTime(vol || 0.08, t + 0.01);
+  g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+  osc.connect(g);
+  g.connect(ctx.destination);
+  osc.start(t);
+  osc.stop(t + dur + 0.05);
+}
+function soundCorrect() {
+  tone(659.25, 0.14, 'sine', 0.09, 0);
+  tone(987.77, 0.24, 'sine', 0.09, 0.11);
+}
+function soundWrong() {
+  tone(196, 0.18, 'sawtooth', 0.06, 0);
+  tone(155.56, 0.28, 'sawtooth', 0.06, 0.12);
+}
+
+/* ============ ИГРА ============ */
+var cards = [
+  { text: "Синопское сражение произошло 18 (30) ноября 1853 года.", answer: true, explain: "Последняя крупная победа парусного флота в истории." },
+  { text: "Турецкая эскадра насчитывала 720 орудий.", answer: false, explain: "У турок было 510 орудий на кораблях и 38 береговых. 720 орудий было у русской эскадры." },
+  { text: "Русская эскадра имела 76 бомбических пушек.", answer: true, explain: "Именно бомбические пушки во многом решили исход боя." },
+  { text: "Бой длился около четырёх с половиной часов.", answer: true, explain: "К 17:00 сопротивление турок было сломлено." },
+  { text: "Из 16 турецких кораблей спаслись три парохода.", answer: false, explain: "Спасся только один — пароход «Таиф» под командой английского офицера Слейда." },
+  { text: "Осман-паша попал в русский плен.", answer: true, explain: "Вместе с ним в плен попали около 200 моряков." },
+  { text: "Потери русских составили около 3000 человек.", answer: false, explain: "Потери русских: 37–38 убитых и 210–235 раненых. 3000–4000 — это потери турок." },
+  { text: "Ни один русский корабль не был потоплен.", answer: true, explain: "Все 6 линейных кораблей и 2 фрегата уцелели." },
+  { text: "The Times назвала сражение «Синопской резнёй».", answer: true, explain: "Ярлык подхватили другие издания — это была пропагандистская кампания." },
+  { text: "Есть документальные подтверждения расстрела раненых турок в воде.", answer: false, explain: "Таких документов нет. Нахимов приказывал щадить пленных." },
+  { text: "Нахимов приказывал прекращать огонь по спустившим флаг кораблям.", answer: true, explain: "И оказывать помощь пленным, включая самого Осман-пашу." },
+  { text: "Маркс опубликовал статьи о Синопе в 1848 году.", answer: false, explain: "Статьи вышли в декабре 1853 — январе 1854. В 1848 Маркс выпустил «Манифест Коммунистической партии»." },
+  { text: "Крымская война началась в октябре 1853 года.", answer: true, explain: "Россия против Турции. Англия и Франция вступили позже." },
+  { text: "Англия и Франция вступили в войну в марте 1854 года.", answer: true, explain: "Через полгода после начала войны." },
+  { text: "Фраза Рассела «вырвать клыки у медведя» прозвучала в 1853 году.", answer: false, explain: "Цитата относится к 1854 году. Это была попытка оправдать эскалацию войны." },
+  { text: "Русские корабли вошли в Синопскую бухту двумя колоннами.", answer: true, explain: "Флагман «Императрица Мария» шёл первым и принял главный удар." },
+  { text: "Флагманом Нахимова был «Императрица Мария».", answer: true, explain: "Корабль принял на себя главный удар." },
+  { text: "Пароходом «Таиф» командовал турецкий офицер.", answer: false, explain: "Им командовал английский офицер Слейд — единственный спасшийся турецкий корабль." },
+  { text: "Турецкая эскадра защищалась 38 береговыми орудиями.", answer: true, explain: "В дополнение к 510 орудиям на кораблях." },
+  { text: "Русские моряки намеренно сожгли город Синоп.", answer: false, explain: "Это пропагандистский миф британской прессы. Документальных подтверждений нет." }
+];
+
+var achievements = [
+  { min: 18, title: "Знаток сражений", desc: "Безупречный результат. Вы знаете Синопское сражение до мельчайших подробностей и не поддаётесь на пропагандистские мифы." },
+  { min: 14, title: "Умный и рассудительный", desc: "Отличный результат. Вы уверенно отличаете факты от вымысла и хорошо разбираетесь в истории сражения." },
+  { min: 9, title: "Логичный и ловкий", desc: "Хорошее начало. Основные факты вы знаете, но некоторые детали стоит перечитать — особенно хронологию и цифры." },
+  { min: 0, title: "Невежда и грубиян", desc: "Шутка, конечно. Но факты упрямы: вернитесь к разделам о силах сторон и мифах — и попробуйте снова." }
+];
+
+var startScreen = document.getElementById('startScreen');
+var playScreen = document.getElementById('playScreen');
+var resultScreen = document.getElementById('resultScreen');
+var cardSlot = document.getElementById('cardSlot');
+var cCounter = document.getElementById('cCounter');
+var cTotal = document.getElementById('cTotal');
+var scoreDisp = document.getElementById('scoreDisp');
+var gFill = document.getElementById('gFill');
+var trueBtn = document.getElementById('trueBtn');
+var falseBtn = document.getElementById('falseBtn');
+var gbtns = document.getElementById('gbtns');
+var swipeHint = document.getElementById('swipeHint');
+var flash = document.getElementById('flash');
+
+var deck = [];
+var idx = 0;
+var score = 0;
+var locked = false;
+var curCard = null;
+
+function shuffle(arr) {
+  var a = arr.slice();
+  for (var i = a.length - 1; i > 0; i--) {
+    var j = Math.floor(Math.random() * (i + 1));
+    var t = a[i]; a[i] = a[j]; a[j] = t;
+  }
+  return a;
+}
+
+function startGame() {
+  deck = shuffle(cards);
+  idx = 0;
+  score = 0;
+  locked = false;
+  scoreDisp.textContent = '0';
+  cTotal.textContent = deck.length;
+  startScreen.style.display = 'none';
+  resultScreen.style.display = 'none';
+  playScreen.style.display = 'block';
+  gbtns.style.display = 'grid';
+  swipeHint.style.display = 'block';
+  renderCard();
+}
+
+function updateHUD() {
+  cCounter.textContent = idx + 1;
+  gFill.style.width = (idx / deck.length * 100) + '%';
+}
+
+function bumpScore() {
+  scoreDisp.textContent = score;
+  scoreDisp.classList.remove('bump');
+  void scoreDisp.offsetWidth;
+  scoreDisp.classList.add('bump');
+}
+
+function renderCard() {
+  if (idx >= deck.length) { showResult(); return; }
+  locked = false;
+  trueBtn.disabled = false;
+  falseBtn.disabled = false;
+  gbtns.style.display = 'grid';
+  swipeHint.style.display = 'block';
+
+  cardSlot.innerHTML = '';
+  var c = document.createElement('div');
+  c.className = 'card';
+  c.innerHTML = '<div class="cnum">' + (idx + 1) + ' / ' + deck.length + '</div>'
+    + '<div class="ctext">' + deck[idx].text + '</div>';
+  cardSlot.appendChild(c);
+  curCard = c;
+  bindDrag(c);
+  updateHUD();
+}
+
+function bindDrag(card) {
+  var dragging = false;
+  var sx = 0;
+  var dx = 0;
+
+  card.addEventListener('pointerdown', function(e) {
+    if (locked) return;
+    dragging = true;
+    sx = e.clientX;
+    dx = 0;
+    card.classList.add('dragging');
+    card.setPointerCapture(e.pointerId);
+  });
+
+  card.addEventListener('pointermove', function(e) {
+    if (!dragging || locked) return;
+    dx = e.clientX - sx;
+    var rot = dx * 0.06;
+    card.style.transform = 'translateX(' + dx + 'px) rotate(' + rot + 'deg)';
+  });
+
+  function finish() {
+    if (!dragging || locked) return;
+    dragging = false;
+    card.classList.remove('dragging');
+    if (dx > 80) {
+      answer(true);
+    } else if (dx < -80) {
+      answer(false);
+    } else {
+      card.style.transform = '';
+    }
+  }
+
+  card.addEventListener('pointerup', finish);
+  card.addEventListener('pointercancel', finish);
+}
+
+function answer(val) {
+  if (locked) return;
+  locked = true;
+  trueBtn.disabled = true;
+  falseBtn.disabled = true;
+
+  var correct = (val === deck[idx].answer);
+  var card = curCard;
+  card.classList.remove('dragging');
+  card.style.transform = '';
+
+  flash.classList.remove('g', 'r');
+  void flash.offsetWidth;
+
+  if (correct) {
+    score++;
+    bumpScore();
+    flash.classList.add('g');
+    soundCorrect();
+    card.classList.add(val ? 'out-r' : 'out-l');
+    setTimeout(function() {
+      idx++;
+      if (idx >= deck.length) {
+        gFill.style.width = '100%';
+        setTimeout(showResult, 200);
+      } else {
+        renderCard();
+      }
+    }, 380);
+  } else {
+    flash.classList.add('r');
+    soundWrong();
+    card.classList.add('shake');
+    setTimeout(function() {
+      showExplanation();
+    }, 440);
+  }
+}
+
+function showExplanation() {
+  var c = deck[idx];
+  var label = c.answer ? 'Правда' : 'Неправда';
+  gbtns.style.display = 'none';
+  swipeHint.style.display = 'none';
+
+  cardSlot.innerHTML =
+    '<div class="explain">' +
+      '<div class="e-label">Правильный ответ — <b>' + label + '</b></div>' +
+      '<p class="e-text">' + c.explain + '</p>' +
+      '<div><button class="btn-sm" id="nextBtn">Дальше</button></div>' +
+    '</div>';
+
+  document.getElementById('nextBtn').addEventListener('click', function() {
+    idx++;
+    if (idx >= deck.length) {
+      gFill.style.width = '100%';
+      setTimeout(showResult, 200);
+    } else {
+      renderCard();
+    }
+  });
+}
+
+function showResult() {
+  playScreen.style.display = 'none';
+  resultScreen.style.display = 'block';
+  document.getElementById('finalScore').textContent = score;
+
+  var ach = achievements[achievements.length - 1];
+  for (var i = 0; i < achievements.length; i++) {
+    if (score >= achievements[i].min) { ach = achievements[i]; break; }
+  }
+  document.getElementById('achTitle').textContent = ach.title;
+  document.getElementById('achDesc').textContent = ach.desc;
+
+  resultScreen.style.opacity = '0';
+  resultScreen.style.transform = 'translateY(16px)';
+  resultScreen.style.transition = 'opacity .6s ease, transform .6s ease';
+  requestAnimationFrame(function() {
+    requestAnimationFrame(function() {
+      resultScreen.style.opacity = '1';
+      resultScreen.style.transform = 'translateY(0)';
+    });
+  });
+}
+
+trueBtn.addEventListener('click', function() { answer(true); });
+falseBtn.addEventListener('click', function() { answer(false); });
+document.getElementById('startBtn').addEventListener('click', startGame);
+document.getElementById('restartBtn').addEventListener('click', startGame);
+
+document.addEventListener('keydown', function(e) {
+  if (playScreen.style.display === 'none') return;
+  if (e.key === 'ArrowRight') answer(true);
+  if (e.key === 'ArrowLeft') answer(false);
+});
+</script>
+</body>
+</html>
