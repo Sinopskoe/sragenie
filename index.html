@@ -13,7 +13,6 @@
     --accent: #8b2e2e;
     --good: #3a6b4a;
     --bad: #a33a3a;
-    --gold: #b8860b;
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -76,20 +75,14 @@
     font-weight: normal;
     margin-left: 6px;
   }
-  .streak-badge {
-    color: var(--accent);
-    opacity: 0;
-    transition: opacity .3s;
-  }
-  .streak-badge.active { opacity: 1; }
 
-  /* ============== ПРОГРЕСС И ТАЙМЕР ============== */
+  /* ============== ПРОГРЕСС ============== */
   .progress-track {
     height: 4px;
     background: var(--line);
     border-radius: 2px;
     overflow: hidden;
-    margin-bottom: 8px;
+    margin-bottom: 24px;
     position: relative;
   }
   .progress-fill {
@@ -98,26 +91,13 @@
     width: 0%;
     transition: width .3s ease;
   }
-  .timer-track {
-    height: 3px;
-    background: var(--line);
-    border-radius: 2px;
-    overflow: hidden;
-    margin-bottom: 24px;
-  }
-  .timer-fill {
-    height: 100%;
-    background: var(--accent);
-    width: 100%;
-    transition: width 0.1s linear;
-  }
 
   /* ============== ЭКРАНЫ ============== */
   .screen { display: none; text-align: center; animation: fadeIn .4s ease; }
   .screen.active { display: block; }
 
   .screen h2 { font-size: 24px; margin-bottom: 12px; }
-  .screen p { color: var(--muted); font-size: 15px; margin-bottom: 24px; }
+  .screen p { color: var(--muted); font-size: 15px; margin-bottom: 24px; line-height: 1.6; }
 
   /* ============== КАРТОЧКИ ============== */
   .cardslot {
@@ -204,8 +184,22 @@
     color: var(--accent);
     margin-bottom: 12px;
     font-weight: 600;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 8px;
   }
   .e-label b { font-weight: normal; color: var(--ink); }
+  .source-tag {
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.5px;
+    background: var(--bg);
+    padding: 2px 6px;
+    border-radius: 4px;
+    border: 1px solid var(--line);
+    text-transform: none;
+  }
   .e-text {
     font-size: 15px;
     line-height: 1.6;
@@ -258,7 +252,7 @@
     font-size: 80px;
     line-height: 1;
     color: var(--ink);
-    margin-bottom: 10px;
+    margin-bottom: 20px;
     animation: scorePop .5s cubic-bezier(.2,1.3,.4,1);
   }
   .rscore small { font-size: 24px; color: var(--muted); }
@@ -267,7 +261,6 @@
     60% { transform: scale(1.05); }
     100% { opacity: 1; transform: scale(1); }
   }
-  .best-score { font-size: 13px; color: var(--muted); margin-bottom: 24px; text-transform: uppercase; letter-spacing: 1px;}
   .rtitle { font-size: 22px; margin-bottom: 8px; }
   .rdesc { color: var(--muted); font-size: 14px; margin-bottom: 32px; line-height: 1.6;}
 
@@ -293,7 +286,7 @@
   }
 
   @media (max-width: 480px) {
-    .cardslot { height: 260px; }
+    .cardslot { height: 280px; }
     .ctext { font-size: 18px; }
     .rscore { font-size: 64px; }
   }
@@ -313,18 +306,6 @@
   <div id="startScreen" class="screen active">
     <h2>Проверьте себя</h2>
     <p>20 фактов о Синопском сражении. Отделите реальные исторические события от мифов и пропагандистских штампов британской прессы XIX века.</p>
-    
-    <div style="margin-bottom: 24px; text-align: left; background: #fff; padding: 16px; border-radius: 8px; border: 1px solid var(--line); font-size: 14px;">
-      <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; margin-bottom: 10px;">
-        <input type="radio" name="difficulty" value="easy" checked>
-        <span><b>Мичман</b> — без таймера, можно подумать</span>
-      </label>
-      <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
-        <input type="radio" name="difficulty" value="hard">
-        <span><b>Адмирал</b> — 15 секунд на ответ, x2 балла</span>
-      </label>
-    </div>
-
     <button class="btn primary" id="startBtn">Начать сражение</button>
   </div>
 
@@ -332,15 +313,11 @@
   <div id="playScreen" class="screen">
     <div class="hud">
       <span>Вопрос <b id="cCounter">1</b>/<b id="cTotal">20</b></span>
-      <span class="streak-badge" id="streakBadge">🔥 Комбо x2</span>
       <span>Баллы <b id="scoreDisp">0</b></span>
     </div>
     
     <div class="progress-track">
       <div class="progress-fill" id="gFill"></div>
-    </div>
-    <div class="timer-track" id="timerTrack" style="display: none;">
-      <div class="timer-fill" id="timerFill"></div>
     </div>
 
     <div class="cardslot" id="cardSlot"></div>
@@ -355,7 +332,6 @@
   <!-- ЭКРАН РЕЗУЛЬТАТА -->
   <div id="resultScreen" class="screen">
     <div class="rscore"><span id="finalScore">0</span><small> / 20</small></div>
-    <div class="best-score" id="bestScoreDisp"></div>
     <h3 class="rtitle" id="achTitle"></h3>
     <p class="rdesc" id="achDesc"></p>
     <button class="btn primary" id="restartBtn">Сыграть снова</button>
@@ -365,26 +341,26 @@
 <script>
 /* ============ ДАННЫЕ ============ */
 var cards = [
-  { text: "Синопское сражение произошло 18 (30) ноября 1853 года.", answer: true, explain: "Последняя крупная победа парусного флота в истории.", source: "[БРЭ]" },
-  { text: "Турецкая эскадра насчитывала 720 орудий.", answer: false, explain: "У турок было 510 орудий на кораблях и 38 береговых. 720 орудий было у русской эскадры.", source: "[Культура.РФ]" },
-  { text: "Русская эскадра имела на вооружении 76 бомбических пушек.", answer: true, explain: "Именно бомбические пушки, стрелявшие разрывными снарядами, во многом решили исход боя.", source: "[БРЭ]" },
-  { text: "Бой длился около четырёх с половиной часов.", answer: true, explain: "К 17:00 сопротивление турок было окончательно сломлено.", source: "[Военная литература]" },
-  { text: "Из 16 турецких кораблей спаслись три парохода.", answer: false, explain: "Спасся только один — пароход «Таиф» под командой английского офицера Слейда.", source: "[Культура.РФ]" },
-  { text: "Осман-паша попал в русский плен.", answer: true, explain: "Вместе с ним в плен попали около 200 турецких моряков.", source: "[bashinform.ru]" },
-  { text: "Потери русских составили около 3000 человек.", answer: false, explain: "Потери русских: 37–38 убитых и 210–235 раненых. 3000–4000 — это потери турок.", source: "[Культура.РФ]" },
-  { text: "Ни один русский корабль не был потоплен.", answer: true, explain: "Все 6 линейных кораблей и 2 фрегата уцелели, несмотря на серьёзные повреждения.", source: "[БРЭ]" },
-  { text: "The Times назвала сражение «Синопской резнёй».", answer: true, explain: "Этот ярлык был подхвачен другими изданиями в рамках антироссийской пропаганды.", source: "[Научная статья]" },
-  { text: "Есть документальные подтверждения расстрела раненых турок в воде.", answer: false, explain: "Таких документов не существует. Нахимов приказывал щадить пленных и оказывать им помощь.", source: "[rossaprimavera.ru]" },
-  { text: "Нахимов приказывал прекращать огонь по спустившим флаг кораблям.", answer: true, explain: "Это исторический факт, подтверждённый приказами адмирала.", source: "[Военная литература]" },
-  { text: "Маркс опубликовал статьи о Синопе в 1848 году.", answer: false, explain: "Статьи вышли в декабре 1853 — январе 1854. В 1848 году Маркс выпустил «Манифест Коммунистической партии».", source: "[De Gruyter Brill]" },
-  { text: "Крымская война началась в октябре 1853 года.", answer: true, explain: "Россия вступила в войну с Турцией. Англия и Франция присоединились позже.", source: "[Институт славяноведения РАН]" },
-  { text: "Англия и Франция вступили в войну в марте 1854 года.", answer: true, explain: "Через полгода после начала боевых действий.", source: "[Институт славяноведения РАН]" },
-  { text: "Фраза Рассела «вырвать клыки у медведя» прозвучала в 1853 году.", answer: false, explain: "Цитата относится к 1854 году. Это была попытка оправдать эскалацию войны перед парламентом.", source: "[Институт славяноведения РАН]" },
-  { text: "Русские корабли вошли в Синопскую бухту двумя колоннами.", answer: true, explain: "Флагман «Императрица Мария» шёл первым и принял на себя главный удар.", source: "[БРЭ]" },
-  { text: "Флагманом Нахимова был корабль «Императрица Мария».", answer: true, explain: "На нём развевался флаг адмирала.", source: "[БРЭ]" },
-  { text: "Пароходом «Таиф» командовал турецкий офицер.", answer: false, explain: "Им командовал английский офицер Слейд — единственный спасшийся корабль.", source: "[Культура.РФ]" },
-  { text: "Турецкая эскадра защищалась 38 береговыми орудиями.", answer: true, explain: "В дополнение к 510 орудиям на кораблях.", source: "[БРЭ]" },
-  { text: "Русские моряки намеренно сожгли город Синоп.", answer: false, explain: "Это пропагандистский миф британской прессы. Документальных подтверждений нет.", source: "[rossaprimavera.ru]" }
+  { text: "Синопское сражение произошло 18 (30) ноября 1853 года.", answer: true, explain: "Последняя крупная победа парусного флота в истории.", source: "БРЭ" },
+  { text: "Турецкая эскадра насчитывала 720 орудий.", answer: false, explain: "У турок было 510 орудий на кораблях и 38 береговых. 720 орудий было у русской эскадры.", source: "Культура.РФ" },
+  { text: "Русская эскадра имела на вооружении 76 бомбических пушек.", answer: true, explain: "Именно бомбические пушки, стрелявшие разрывными снарядами, во многом решили исход боя.", source: "БРЭ" },
+  { text: "Бой длился около четырёх с половиной часов.", answer: true, explain: "К 17:00 сопротивление турок было окончательно сломлено.", source: "Военная литература" },
+  { text: "Из 16 турецких кораблей спаслись три парохода.", answer: false, explain: "Спасся только один — пароход «Таиф» под командой английского офицера Слейда.", source: "Культура.РФ" },
+  { text: "Осман-паша попал в русский плен.", answer: true, explain: "Вместе с ним в плен попали около 200 турецких моряков.", source: "bashinform.ru" },
+  { text: "Потери русских составили около 3000 человек.", answer: false, explain: "Потери русских: 37–38 убитых и 210–235 раненых. 3000–4000 — это потери турок.", source: "Культура.РФ" },
+  { text: "Ни один русский корабль не был потоплен.", answer: true, explain: "Все 6 линейных кораблей и 2 фрегата уцелели, несмотря на серьёзные повреждения.", source: "БРЭ" },
+  { text: "The Times назвала сражение «Синопской резнёй».", answer: true, explain: "Этот ярлык был подхвачен другими изданиями в рамках антироссийской пропаганды.", source: "Научная статья" },
+  { text: "Есть документальные подтверждения расстрела раненых турок в воде.", answer: false, explain: "Таких документов не существует. Нахимов приказывал щадить пленных и оказывать им помощь.", source: "rossaprimavera.ru" },
+  { text: "Нахимов приказывал прекращать огонь по спустившим флаг кораблям.", answer: true, explain: "Это исторический факт, подтверждённый приказами адмирала.", source: "Военная литература" },
+  { text: "Маркс опубликовал статьи о Синопе в 1848 году.", answer: false, explain: "Статьи вышли в декабре 1853 — январе 1854. В 1848 году Маркс выпустил «Манифест Коммунистической партии».", source: "De Gruyter Brill" },
+  { text: "Крымская война началась в октябре 1853 года.", answer: true, explain: "Россия вступила в войну с Турцией. Англия и Франция присоединились позже.", source: "Институт славяноведения РАН" },
+  { text: "Англия и Франция вступили в войну в марте 1854 года.", answer: true, explain: "Через полгода после начала боевых действий.", source: "Институт славяноведения РАН" },
+  { text: "Фраза Рассела «вырвать клыки у медведя» прозвучала в 1853 году.", answer: false, explain: "Цитата относится к 1854 году. Это была попытка оправдать эскалацию войны перед парламентом.", source: "Институт славяноведения РАН" },
+  { text: "Русские корабли вошли в Синопскую бухту двумя колоннами.", answer: true, explain: "Флагман «Императрица Мария» шёл первым и принял на себя главный удар.", source: "БРЭ" },
+  { text: "Флагманом Нахимова был корабль «Императрица Мария».", answer: true, explain: "На нём развевался флаг адмирала.", source: "БРЭ" },
+  { text: "Пароходом «Таиф» командовал турецкий офицер.", answer: false, explain: "Им командовал английский офицер Слейд — единственный спасшийся корабль.", source: "Культура.РФ" },
+  { text: "Турецкая эскадра защищалась 38 береговыми орудиями.", answer: true, explain: "В дополнение к 510 орудиям на кораблях.", source: "БРЭ" },
+  { text: "Русские моряки намеренно сожгли город Синоп.", answer: false, explain: "Это пропагандистский миф британской прессы. Документальных подтверждений нет.", source: "rossaprimavera.ru" }
 ];
 
 var achievements = [
@@ -403,25 +379,18 @@ var cCounter = document.getElementById('cCounter');
 var cTotal = document.getElementById('cTotal');
 var scoreDisp = document.getElementById('scoreDisp');
 var gFill = document.getElementById('gFill');
-var timerTrack = document.getElementById('timerTrack');
-var timerFill = document.getElementById('timerFill');
 var trueBtn = document.getElementById('trueBtn');
 var falseBtn = document.getElementById('falseBtn');
 var gbtns = document.getElementById('gbtns');
 var swipeHint = document.getElementById('swipeHint');
 var flash = document.getElementById('flash');
-var streakBadge = document.getElementById('streakBadge');
 
 /* ============ ПЕРЕМЕННЫЕ ИГРЫ ============ */
 var deck = [];
 var idx = 0;
 var score = 0;
-var streak = 0;
 var locked = false;
 var curCard = null;
-var isHardMode = false;
-var timerInterval = null;
-var timeLeft = 15;
 
 /* ============ ЗВУК ============ */
 var audioCtx = null;
@@ -443,7 +412,6 @@ function tone(freq, dur, type, vol, delay) {
 }
 function soundCorrect() { tone(659.25, 0.14, 'sine', 0.09, 0); tone(987.77, 0.24, 'sine', 0.09, 0.11); }
 function soundWrong() { tone(196, 0.18, 'sawtooth', 0.06, 0); tone(155.56, 0.28, 'sawtooth', 0.06, 0.12); }
-function soundTick() { tone(800, 0.05, 'square', 0.03, 0); }
 
 /* ============ ЛОГИКА ============ */
 function shuffle(arr) {
@@ -456,20 +424,14 @@ function shuffle(arr) {
 }
 
 function startGame() {
-  var diffRadios = document.getElementsByName('difficulty');
-  isHardMode = (diffRadios[1] && diffRadios[1].checked);
-  
   deck = shuffle(cards);
-  idx = 0; score = 0; streak = 0; locked = false;
+  idx = 0; score = 0; locked = false;
   scoreDisp.textContent = '0';
   cTotal.textContent = deck.length;
-  streakBadge.classList.remove('active');
   
   startScreen.classList.remove('active');
   resultScreen.classList.remove('active');
   playScreen.classList.add('active');
-  
-  timerTrack.style.display = isHardMode ? 'block' : 'none';
   
   renderCard();
 }
@@ -484,36 +446,6 @@ function bumpScore() {
   scoreDisp.classList.remove('bump');
   void scoreDisp.offsetWidth;
   scoreDisp.classList.add('bump');
-}
-
-function startTimer() {
-  if (!isHardMode) return;
-  clearInterval(timerInterval);
-  timeLeft = 15;
-  timerFill.style.width = '100%';
-  timerFill.style.transition = 'none';
-  
-  setTimeout(function() {
-    timerFill.style.transition = 'width 0.1s linear';
-  }, 50);
-
-  timerInterval = setInterval(function() {
-    timeLeft -= 0.1;
-    if (timeLeft <= 0) {
-      clearInterval(timerInterval);
-      timerFill.style.width = '0%';
-      if (!locked) {
-        answer(false, true); // Время вышло - засчитываем как ошибку (или можно сделать отдельно)
-      }
-    } else {
-      timerFill.style.width = (timeLeft / 15 * 100) + '%';
-      if (timeLeft <= 3.05 && timeLeft > 2.95) soundTick(); // Тик на последних секундах
-    }
-  }, 100);
-}
-
-function stopTimer() {
-  clearInterval(timerInterval);
 }
 
 function renderCard() {
@@ -533,7 +465,6 @@ function renderCard() {
   curCard = c;
   bindDrag(c);
   updateHUD();
-  startTimer();
 }
 
 function bindDrag(card) {
@@ -566,14 +497,13 @@ function bindDrag(card) {
   card.addEventListener('pointercancel', finish);
 }
 
-function answer(val, isTimeout) {
+function answer(val) {
   if (locked) return;
   locked = true;
-  stopTimer();
   trueBtn.disabled = true;
   falseBtn.disabled = true;
 
-  var correct = (val === deck[idx].answer) && !isTimeout;
+  var correct = (val === deck[idx].answer);
   var card = curCard;
   card.classList.remove('dragging');
   card.style.transform = '';
@@ -582,16 +512,7 @@ function answer(val, isTimeout) {
   void flash.offsetWidth;
 
   if (correct) {
-    streak++;
-    var points = isHardMode ? 2 : 1;
-    if (streak >= 3) {
-      points *= 2; // Бонус за комбо
-      streakBadge.classList.add('active');
-    } else {
-      streakBadge.classList.remove('active');
-    }
-    score += points;
-    
+    score++;
     bumpScore();
     flash.classList.add('g');
     soundCorrect();
@@ -603,24 +524,22 @@ function answer(val, isTimeout) {
       else { renderCard(); }
     }, 380);
   } else {
-    streak = 0;
-    streakBadge.classList.remove('active');
     flash.classList.add('r');
     soundWrong();
     card.classList.add('shake');
-    setTimeout(function() { showExplanation(isTimeout); }, 440);
+    setTimeout(function() { showExplanation(); }, 440);
   }
 }
 
-function showExplanation(isTimeout) {
+function showExplanation() {
   var c = deck[idx];
-  var label = isTimeout ? "Время вышло!" : (c.answer ? 'Правда' : 'Неправда');
+  var label = c.answer ? 'Правда' : 'Неправда';
   gbtns.style.display = 'none';
   swipeHint.style.display = 'none';
 
   cardSlot.innerHTML =
     '<div class="explain">' +
-      '<div class="e-label">' + label + ' <span style="color:var(--muted);font-size:10px;margin-left:8px;">' + c.source + '</span></div>' +
+      '<div class="e-label">Правильный ответ — <b>' + label + '</b> <span class="source-tag">' + c.source + '</span></div>' +
       '<p class="e-text">' + c.explain + '</p>' +
       '<div><button class="btn primary" id="nextBtn" style="max-width:100%;">Дальше</button></div>' +
     '</div>';
@@ -639,19 +558,10 @@ function showResult() {
 
   var ach = achievements[achievements.length - 1];
   for (var i = 0; i < achievements.length; i++) {
-    if (score >= (isHardMode ? achievements[i].min * 2 : achievements[i].min)) { ach = achievements[i]; break; }
+    if (score >= achievements[i].min) { ach = achievements[i]; break; }
   }
   document.getElementById('achTitle').textContent = ach.title;
   document.getElementById('achDesc').textContent = ach.desc;
-  
-  var best = localStorage.getItem('sinopBestScore') || 0;
-  if (score > best) {
-    localStorage.setItem('sinopBestScore', score);
-    best = score;
-    document.getElementById('bestScoreDisp').textContent = "🏆 Новый рекорд: " + best;
-  } else {
-    document.getElementById('bestScoreDisp').textContent = "🏆 Ваш рекорд: " + best;
-  }
 }
 
 /* ============ СОБЫТИЯ ============ */
