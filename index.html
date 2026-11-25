@@ -34,26 +34,9 @@
 
   .app-container {
     width: 100%;
-    max-width: 520px;
+    max-width: 600px;
     padding: 20px;
     position: relative;
-  }
-
-  /* ============== ХЕДЕР ИГРЫ ============== */
-  .game-header {
-    text-align: center;
-    margin-bottom: 24px;
-  }
-  .game-header h1 {
-    font-size: 28px;
-    letter-spacing: -0.5px;
-    margin-bottom: 8px;
-  }
-  .game-header p {
-    color: var(--muted);
-    font-size: 13px;
-    letter-spacing: 1px;
-    text-transform: uppercase;
   }
 
   /* ============== СТАТУС-БАР ============== */
@@ -102,7 +85,8 @@
   /* ============== КАРТОЧКИ ============== */
   .cardslot {
     position: relative;
-    height: 280px;
+    /* Высота карточки зависит от высоты экрана, но не меньше 320px и не больше 550px */
+    height: clamp(320px, 55vh, 550px);
     margin-bottom: 24px;
     perspective: 1000px;
   }
@@ -112,17 +96,17 @@
     inset: 0;
     background: #ffffff;
     border: 1px solid var(--line);
-    border-radius: 12px;
+    border-radius: 16px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 32px;
+    padding: 40px 32px;
     text-align: center;
     cursor: grab;
     user-select: none;
     touch-action: none;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.04);
+    box-shadow: 0 4px 30px rgba(0,0,0,0.05);
     transition: transform .3s cubic-bezier(.2,.8,.3,1), opacity .3s ease, border-color .2s;
     animation: cardIn .4s cubic-bezier(.2,.8,.3,1);
   }
@@ -150,16 +134,17 @@
   }
 
   .cnum {
-    font-size: 10px;
+    font-size: 11px;
     letter-spacing: 3px;
     text-transform: uppercase;
     color: var(--muted);
-    margin-bottom: 16px;
+    margin-bottom: 20px;
   }
   .ctext {
     font-family: Georgia, serif;
-    font-size: 20px;
-    line-height: 1.5;
+    /* Адаптивный размер шрифта для большого окна */
+    font-size: clamp(22px, 3.5vw, 32px);
+    line-height: 1.4;
     color: var(--ink);
   }
 
@@ -168,8 +153,8 @@
     background: #ffffff;
     border: 1px solid var(--line);
     border-left: 4px solid var(--accent);
-    border-radius: 12px;
-    padding: 28px;
+    border-radius: 16px;
+    padding: 32px;
     text-align: left;
     height: 100%;
     display: flex;
@@ -178,11 +163,11 @@
     animation: fadeIn .4s ease;
   }
   .e-label {
-    font-size: 11px;
+    font-size: 12px;
     letter-spacing: 2px;
     text-transform: uppercase;
     color: var(--accent);
-    margin-bottom: 12px;
+    margin-bottom: 16px;
     font-weight: 600;
     display: flex;
     flex-wrap: wrap;
@@ -191,20 +176,20 @@
   }
   .e-label b { font-weight: normal; color: var(--ink); }
   .source-tag {
-    font-size: 10px;
+    font-size: 11px;
     color: var(--muted);
     letter-spacing: 0.5px;
     background: var(--bg);
-    padding: 2px 6px;
+    padding: 3px 8px;
     border-radius: 4px;
     border: 1px solid var(--line);
     text-transform: none;
   }
   .e-text {
-    font-size: 15px;
+    font-size: clamp(16px, 2vw, 20px);
     line-height: 1.6;
     color: var(--ink);
-    margin-bottom: 20px;
+    margin-bottom: 24px;
   }
 
   /* ============== КНОПКИ ============== */
@@ -215,12 +200,12 @@
     margin-bottom: 12px;
   }
   .btn {
-    padding: 16px;
+    padding: 18px;
     background: #ffffff;
     border: 1px solid var(--line);
     border-radius: 8px;
     font-family: inherit;
-    font-size: 12px;
+    font-size: 13px;
     letter-spacing: 1.5px;
     text-transform: uppercase;
     cursor: pointer;
@@ -234,7 +219,7 @@
   
   .btn.fb:hover { background: #fdf5f5; border-color: var(--bad); color: var(--bad); }
   .btn.tb:hover { background: #f4f8f5; border-color: var(--good); color: var(--good); }
-  .btn.primary { background: var(--ink); color: #fff; border: none; width: 100%; max-width: 200px; margin: 0 auto; display: block; }
+  .btn.primary { background: var(--ink); color: #fff; border: none; width: 100%; max-width: 240px; margin: 0 auto; display: block; padding: 16px; }
   .btn.primary:hover { background: #333; }
 
   .swipe-hint {
@@ -261,8 +246,8 @@
     60% { transform: scale(1.05); }
     100% { opacity: 1; transform: scale(1); }
   }
-  .rtitle { font-size: 22px; margin-bottom: 8px; }
-  .rdesc { color: var(--muted); font-size: 14px; margin-bottom: 32px; line-height: 1.6;}
+  .rtitle { font-size: 24px; margin-bottom: 8px; }
+  .rdesc { color: var(--muted); font-size: 15px; margin-bottom: 32px; line-height: 1.6;}
 
   /* ============== ФЛЕШ-ЭФФЕКТ ============== */
   .flash {
@@ -286,8 +271,8 @@
   }
 
   @media (max-width: 480px) {
-    .cardslot { height: 280px; }
-    .ctext { font-size: 18px; }
+    .cardslot { height: clamp(300px, 50vh, 450px); }
+    .ctext { font-size: 20px; }
     .rscore { font-size: 64px; }
   }
 </style>
@@ -295,18 +280,13 @@
 <body>
 
 <div class="app-container">
-  <div class="game-header">
-    <h1>Синопский фактчекинг</h1>
-    <p>Триумф или пропаганда?</p>
-  </div>
-
   <div class="flash" id="flash"></div>
 
   <!-- СТАРТОВЫЙ ЭКРАН -->
   <div id="startScreen" class="screen active">
     <h2>Проверьте себя</h2>
     <p>20 фактов о Синопском сражении. Отделите реальные исторические события от мифов и пропагандистских штампов британской прессы XIX века.</p>
-    <button class="btn primary" id="startBtn">Начать сражение</button>
+    <button class="btn primary" id="startBtn">Начать</button>
   </div>
 
   <!-- ЭКРАН ИГРЫ -->
@@ -323,8 +303,8 @@
     <div class="cardslot" id="cardSlot"></div>
 
     <div class="controls" id="gbtns">
-      <button class="btn fb" id="falseBtn">← Неправда</button>
-      <button class="btn tb" id="trueBtn">Правда →</button>
+      <button class="btn fb" id="falseBtn">Неправда</button>
+      <button class="btn tb" id="trueBtn">Правда</button>
     </div>
     <div class="swipe-hint" id="swipeHint">Свайп влево или вправо</div>
   </div>
